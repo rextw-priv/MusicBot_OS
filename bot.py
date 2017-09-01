@@ -17,7 +17,7 @@ elif os.environ.get('LANG') == 'en-US':
 bot = Bot(
     api_token=os.environ.get('API_TOKEN'),
     name=os.environ.get('BOT_NAME'),
-    botan_token=os.environ.get("BOTAN_TOKEN")
+    botan_token=os.environ.get("BOTAN_TOKEN"),
     nextPage = texts['nextPage']
 )
 logger = logging.getLogger("musicbot")
