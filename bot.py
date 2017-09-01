@@ -93,7 +93,7 @@ async def add_track(chat, audio):
         doc["sender"] = os.environ.get("CHANNEL")
         
     await db.tracks.insert(doc)
-    await say(texts['addMusic'](sendervar, doc.get("performer"), doc.get("title"))
+    await say(texts['addMusic'](sendervar, doc.get("performer"), doc.get("title")))
     if (sendervar != os.environ.get('CHANNEL_NAME')):
         await chat.send_text(texts['addMusic'](sendervar, doc.get("performer"), doc.get("title")) + " !")
 
