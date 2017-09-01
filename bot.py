@@ -17,8 +17,7 @@ elif os.environ.get('LANG') == 'en-US':
 bot = Bot(
     api_token=os.environ.get('API_TOKEN'),
     name=os.environ.get('BOT_NAME'),
-    botan_token=os.environ.get("BOTAN_TOKEN"),
-    nextPage = texts['nextPage']
+    botan_token=os.environ.get("BOTAN_TOKEN")
 )
 logger = logging.getLogger("musicbot")
 channel = bot.channel(os.environ.get('CHANNEL'))
@@ -178,7 +177,7 @@ def music(chat, match):
 def whoami(chat, match):
     return chat.reply(chat.sender["id"])
 
-@bot.command(r'\((\d+)/\d+\) %s "(.+)"' % bot.nextPage)
+@bot.command(r'\((\d+)/\d+\) %s "(.+)"' % texts['nextPage'])
 def more(chat, match):
     page = int(match.group(1))
     return search_tracks(chat, match.group(2), page)
