@@ -71,7 +71,7 @@ async def add_track(chat, audio):
     if (matchedMusic):
         if not int(audio.get("file_size")) > int(matchedMusic["file_size"]):
             await chat.send_text(texts['musicExists'])
-            await say(texts['sentExistedMusic'](sendervar, audio.get("performer"), audio.get("title")))
+            await say(texts['sentExistedMusic'](sendervar, str(audio.get("performer")), str(audio.get("title"))))
             return
         else:
             await text_delete(str(audio.get("performer"))+ '>' + str(audio.get("title")))
@@ -83,7 +83,7 @@ async def add_track(chat, audio):
                 doc["sender"] = os.environ.get("CHANNEL")
             await db.tracks.insert(doc)
             await chat.send_text(texts['replaced'])
-            await say(texts['sentLargerMusic'](sendervar, audio.get("performer"), audio.get("title")))
+            await say(texts['sentLargerMusic'](sendervar, str(audio.get("performer")), str(audio.get("title"))))
             return
     doc = audio.copy()
     try:
@@ -93,9 +93,9 @@ async def add_track(chat, audio):
         doc["sender"] = os.environ.get("CHANNEL")
         
     await db.tracks.insert(doc)
-    await say(texts['addMusic'](sendervar, doc.get("performer"), doc.get("title")))
+    await say(texts['addMusic'](sendervar, str(doc.get("performer")), str(doc.get("title"))))
     if (sendervar != os.environ.get('CHANNEL_NAME')):
-        await chat.send_text(texts['addMusic'](sendervar, doc.get("performer"), doc.get("title")) + " !")
+        await chat.send_text(texts['addMusic'](sendervar, str(doc.get("performer")), str(doc.get("title"))) + " !")
 
 @bot.command(r'/add')
 async def add(chat, match):
@@ -110,7 +110,7 @@ async def add(chat, match):
         sendervar = str(chat.sender)
     if (await db.tracks.find_one({ "file_id": audio["file_id"] })):
         await chat.send_text(texts['musicExists'])
-        await say(texts['sentExistedMusic'](sendervar, audio.get("performer"), audio.get("title")))
+        await say(texts['sentExistedMusic'](sendervar, str(audio.get("performer")), str(audio.get("title"))))
         return
 
     doc = audio.copy()
@@ -121,18 +121,18 @@ async def add(chat, match):
         doc["sender"] = os.environ.get("CHANNEL")
         
     await db.tracks.insert(doc)
-    await say(texts['addMusic'](sendervar, doc.get("performer"), doc.get("title")))
+    await say(texts['addMusic'](sendervar, str(doc.get("performer")), str(doc.get("title"))))
     if (sendervar != os.environ.get('CHANNEL_NAME')):
-        await chat.send_text(texts['addMusic'](sendervar, doc.get("performer"), doc.get("title")) + " !")
+        await chat.send_text(texts['addMusic'](sendervar, str(doc.get("performer")), str(doc.get("title"))) + " !")
         
 @bot.command(r'/admin')
 async def admin(chat, match):
     if not await isAdmin(chat.sender['id']):
-        await say(texts['inquiredAdminListRefused'](chat.sender))
+        await say(texts['inquiredAdminListRefused'](str(chat.sender)))
         await chat.send_text(texts['denied'])
         return
     else:
-        await say(texts['inquiredAdminList'](chat.sender))
+        await say(texts['inquiredAdminList'](str(chat.sender)))
         raw = await getAdmin()
         adminStr=''
         i=0
@@ -156,13 +156,13 @@ async def delete(chat, match):
         
         if (len(art) == 2):
             if (len(msg) == 2):
-                await say(texts['deleteNumTypeArt'](chat.sender, cursor, msg[1], art[0], art[1]))
+                await say(texts['deleteNumTypeArt'](chat.sender, str(cursor), msg[1].upper(), art[0], art[1]))
             elif (len(msg) == 1):
-                await say(texts['deleteNumArt'](chat.sender, cursor, art[0], art[1]))
+                await say(texts['deleteNumArt'](chat.sender, str(cursor), art[0], art[1]))
         elif (len(msg) == 2):
-            await say(texts['deleteNumType'](chat.sender, cursor, msg[1], msg[0]))
+            await say(texts['deleteNumType'](chat.sender, str(cursor), msg[1].upper(), msg[0]))
         elif (len(msg) == 1):
-            await say(texts['deleteNum'](chat.sender, cursor, text))
+            await say(texts['deleteNum'](chat.sender, str(cursor), text))
         else:
             await say(texts['deleteError'])
             await say("(text , msg , len(msg)) = " + str(text) + " , " + str(msg) + " , " + str(len(msg)))
@@ -194,22 +194,22 @@ async def inline(iq):
     art = msg[0].split('>')
     if (len(art) == 2):
         if (len(msg) == 2):
-            await say(texts['searchTypeArt'](iq.sender, msg[1], art[0], art[1]))
+            await say(texts['searchTypeArt'](str(iq.sender), msg[1].upper(), art[0], art[1]))
             cursor = await text_search(iq.query)
             results = [inline_result(iq.query, t) for t in await cursor.to_list(10)]
             await iq.answer(results)
         elif (len(msg) == 1):
-            await say(texts['searchArt'](iq.sender, art[0], art[1]))
+            await say(texts['searchArt'](str(iq.sender), art[0], art[1]))
             cursor = await text_search(iq.query)
             results = [inline_result(iq.query, t) for t in await cursor.to_list(10)]
             await iq.answer(results)
     elif (len(msg) == 2):
-        await say(texts['searchType'](iq.sender, msg[1], msg[0]))
+        await say(texts['searchType'](str(iq.sender), msg[1].upper(), msg[0]))
         cursor = await text_search(iq.query)
         results = [inline_result(iq.query, t) for t in await cursor.to_list(10)]
         await iq.answer(results)
     elif (len(msg) == 1):
-        await say(texts['search'](iq.sender, iq.query))
+        await say(texts['search'](str(iq.sender), iq.query))
         cursor = await text_search(iq.query)
         results = [inline_result(iq.query, t) for t in await cursor.to_list(10)]
         await iq.answer(results)
@@ -227,7 +227,7 @@ def usage(chat, match):
 async def start(chat, match):
     tuid = chat.sender["id"]
     if not (await db.users.find_one({ "id": tuid })):
-        await say(texts['newUser'](chat.sender))
+        await say(texts['newUser'](str(chat.sender)))
         await db.users.insert(chat.sender.copy())
 
     await chat.send_text(greeting, parse_mode='Markdown')
@@ -238,7 +238,7 @@ async def stop(chat, match):
     tuid = chat.sender["id"]
     await db.users.remove({ "id": tuid })
 
-    await say(texts['exit'](chat.sender))
+    await say(texts['exit'](str(chat.sender)))
     await chat.send_text(texts['bye'])
 
 
@@ -263,7 +263,7 @@ async def stats(chat, match):
         return (await chat.send_text(texts['statsNotReady']))
 
     size = human_size(aggr[0]["size"])
-    text = texts['musicCalc'](count, size)
+    text = texts['musicCalc'](str(count), str(size))
 
     return (await chat.send_text(text))
 
@@ -295,13 +295,13 @@ async def search_tracks(chat, query, page=1):
             author = art[0]
             song = art[1]
             if (len(typel) == 1):
-                await say(texts['searchArt'](chat.sender, author, song))
+                await say(texts['searchArt'](str(chat.sender), author, song))
             else:
-                await say(texts['searchTypeArt'](chat.sender, typel[1], author, song))
+                await say(texts['searchTypeArt'](str(chat.sender), typel[1].upper(), author, song))
         elif (len(typel) == 1):
-            await say(texts['search'](chat.sender, query))
+            await say(texts['search'](str(chat.sender), query))
         else:
-            await say(texts['searchType'](chat.sender, typel[1], typel[0]))
+            await say(texts['searchType'](str(chat.sender), typel[1].upper(), typel[0]))
 
         limit = 3
         offset = (page - 1) * limit
