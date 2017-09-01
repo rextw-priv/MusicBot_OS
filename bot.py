@@ -9,10 +9,12 @@ import ast
 from aiotg import Bot, chat
 from database import db, text_search, text_delete
 
-if os.environ.get('LANG') == 'zh-TW' or not os.environ.get('LANG'):
+if os.environ.get('LANG') == 'zh-TW':
     from zh_TW import greeting, help, not_found, texts
 elif os.environ.get('LANG') == 'en-US':
     from en_US import greeting, help, not_found, texts
+else:
+    from zh_TW import greeting, help, not_found, texts
 
 bot = Bot(
     api_token=os.environ.get('API_TOKEN'),
@@ -177,7 +179,7 @@ def music(chat, match):
 def whoami(chat, match):
     return chat.reply(chat.sender["id"])
 
-@bot.command(r'\((\d+)/\d+\) %s "(.+)"' % texts['nextPage'])
+@bot.command(r'\((\d+)/\d+\) @%s "(.+)"' % texts['nextPage'])
 def more(chat, match):
     page = int(match.group(1))
     return search_tracks(chat, match.group(2), page)
