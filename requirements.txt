@@ -1,3 +1,1 @@
 setuptools>=30
-pip>=9.0.1
-motor>=0.5
