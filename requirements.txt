@@ -1,4 +1,4 @@
-setuptools>=30
+setuptools
 pip>=9.0.1
 motor>=0.5
 aiotg>=0.7.3
